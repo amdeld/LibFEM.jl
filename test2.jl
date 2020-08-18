@@ -1,5 +1,3 @@
-#cdfdg zze
-#gtr
 using LibFEM,Plots
 # Units system mm/tonne/s/K
 # ===============================================================================
