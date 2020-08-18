@@ -1,4 +1,26 @@
 module LibFEM
+function D1_SpringAssemble(K,k,i,j)
+   #function prototype: D1_SpringAssemble(K,k,i,j)
+   #This function assembles the element stiffness
+   #matrix k of the spring with nodes i & j into the
+   #global stiffness matrix K.
+   #This function returns the global stiffness matrix K 
+   #after the element stiffness matrix k is assembled.
+   K[i,i] = K[i,i] + k[1,1]
+   K[i,j] = K[i,j] + k[1,2]
+   K[j,i] = K[j,i] + k[2,1]
+   K[j,j] = K[j,j] + k[2,2]
+   return K   
+   end
+   export D1_SpringAssemble
+   function D1_SpringElementForce(k,u)
+      #function prototype: D1_SpringElementForce(k,u)
+      #This function returns the element nodal force
+      #vector given the element stiffness matrix k 
+      #and the element nodal displacement vector u.
+      return k * u
+      end
+      export D1_SpringElementForce
 function D2_TrussAssemble(K,k,i,j)
    #function prototype : D2_TrussAssemble(K,k,i,j)
    #This function assembles the element stiffness
