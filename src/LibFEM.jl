@@ -448,6 +448,92 @@ function D3_SpringElementForce(k, thetax, thetay, thetaz, u)
     return k * [-Cx -Cy -Cz Cx Cy Cz] * u
 end
 export D3_SpringElementForce
+function D3_SpringElementStiffness(k, thetax, thetay, thetaz)
+    #function prototype: D3_SpringElementStiffness(k,thetax,thetay,thetaz)
+    #This function returns the element
+    #stiffness matrix for a 3D spring
+    #element with stiffness k;
+    #angles thetax; thetay; thetaz
+    #(in degrees). The size of the element
+    #stiffness matrix is 6 x 6.
+    x = thetax * pi / 180
+    u = thetay * pi / 180
+    v = thetaz * pi / 180
+    Cx = cos(x)
+    Cy = cos(u)
+    Cz = cos(v)
+    w = [
+        Cx * Cx Cx * Cy Cx * Cz
+        Cy * Cx Cy * Cy Cy * Cz
+        Cz * Cx Cz * Cy Cz * Cz
+    ]
+    return k * [w -w; -w w]
+end
+export D3_SpringElementStiffness
+function D3_TrussAssemble(K, k, i, j)
+    #function prototype: D3_TrussAssemble(K,k,i,j)
+    #This function assembles the element stiffness
+    #matrix k of the space truss element with nodes
+    #i & j into the global stiffness matrix K.
+    #This function returns the global stiffness
+    #matrix K after the element stiffness matrix
+    #k is assembled.
+    K[3*i-2, 3*i-2] = K[3*i-2, 3*i-2] + k[1, 1]
+    K[3*i-2, 3*i-1] = K[3*i-2, 3*i-1] + k[1, 2]
+    K[3*i-2, 3*i] = K[3*i-2, 3*i] + k[1, 3]
+    K[3*i-2, 3*j-2] = K[3*i-2, 3*j-2] + k[1, 4]
+    K[3*i-2, 3*j-1] = K[3*i-2, 3*j-1] + k[1, 5]
+    K[3*i-2, 3*j] = K[3*i-2, 3*j] + k[1, 6]
+    K[3*i-1, 3*i-2] = K[3*i-1, 3*i-2] + k[2, 1]
+    K[3*i-1, 3*i-1] = K[3*i-1, 3*i-1] + k[2, 2]
+    K[3*i-1, 3*i] = K[3*i-1, 3*i] + k[2, 3]
+    K[3*i-1, 3*j-2] = K[3*i-1, 3*j-2] + k[2, 4]
+    K[3*i-1, 3*j-1] = K[3*i-1, 3*j-1] + k[2, 5]
+    K[3*i-1, 3*j] = K[3*i-1, 3*j] + k[2, 6]
+    K[3*i, 3*i-2] = K[3*i, 3*i-2] + k[3, 1]
+    K[3*i, 3*i-1] = K[3*i, 3*i-1] + k[3, 2]
+    K[3*i, 3*i] = K[3*i, 3*i] + k[3, 3]
+    K[3*i, 3*j-2] = K[3*i, 3*j-2] + k[3, 4]
+    K[3*i, 3*j-1] = K[3*i, 3*j-1] + k[3, 5]
+    K[3*i, 3*j] = K[3*i, 3*j] + k[3, 6]
+    K[3*j-2, 3*i-2] = K[3*j-2, 3*i-2] + k[4, 1]
+    K[3*j-2, 3*i-1] = K[3*j-2, 3*i-1] + k[4, 2]
+    K[3*j-2, 3*i] = K[3*j-2, 3*i] + k[4, 3]
+    K[3*j-2, 3*j-2] = K[3*j-2, 3*j-2] + k[4, 4]
+    K[3*j-2, 3*j-1] = K[3*j-2, 3*j-1] + k[4, 5]
+    K[3*j-2, 3*j] = K[3*j-2, 3*j] + k[4, 6]
+    K[3*j-1, 3*i-2] = K[3*j-1, 3*i-2] + k[5, 1]
+    K[3*j-1, 3*i-1] = K[3*j-1, 3*i-1] + k[5, 2]
+    K[3*j-1, 3*i] = K[3*j-1, 3*i] + k[5, 3]
+    K[3*j-1, 3*j-2] = K[3*j-1, 3*j-2] + k[5, 4]
+    K[3*j-1, 3*j-1] = K[3*j-1, 3*j-1] + k[5, 5]
+    K[3*j-1, 3*j] = K[3*j-1, 3*j] + k[5, 6]
+    K[3*j, 3*i-2] = K[3*j, 3*i-2] + k[6, 1]
+    K[3*j, 3*i-1] = K[3*j, 3*i-1] + k[6, 2]
+    K[3*j, 3*i] = K[3*j, 3*i] + k[6, 3]
+    K[3*j, 3*j-2] = K[3*j, 3*j-2] + k[6, 4]
+    K[3*j, 3*j-1] = K[3*j, 3*j-1] + k[6, 5]
+    K[3*j, 3*j] = K[3*j, 3*j] + k[6, 6]
+    return K
+end
+export D3_TrussAssemble
+function D3_TrussElementForce(E, A, L, thetax, thetay, thetaz, u)
+    #function prototype: D3_TrussElementForce(E,A,L,thetax,thetay,thetaz,u)
+    #This function returns the element force
+    #given the modulus of elasticity E; the
+    #cross-sectional area A; the length L;
+    #the angles thetax; thetay; thetaz
+    #(in degrees), & the element nodal
+    #displacement vector u.
+    x = thetax * pi / 180
+    w = thetay * pi / 180
+    v = thetaz * pi / 180
+    Cx = cos(x)
+    Cy = cos(w)
+    Cz = cos(v)
+    return E * A / L * [-Cx -Cy -Cz Cx Cy Cz] * u
+end
+export D3_TrussElementForce
 function D3_TrussElementLength(x1, y1, z1, x2, y2, z2)
     #function prototype: D3_TrussElementLength(x1,y1,z1,x2,y2,z2)
     #This function returns the length of the
@@ -502,7 +588,7 @@ function D3_TrussElementStress(E, L, thetax, thetay, thetaz, u)
     #This function returns the element stress
     #given the modulus of elasticity E; the
     #length L; the angles thetax; thetay;
-    #thetaz [in degrees], & the element 
+    #thetaz [in degrees], & the element
     #nodal displacement vector u.
     x = thetax * pi / 180
     w = thetay * pi / 180
