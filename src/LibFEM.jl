@@ -273,6 +273,21 @@ function D2_SpringElementForce(k,theta,u)
    return k*[-C -S C S]* u
    end
    export D2_SpringElementForce
+   function D2_SpringElementStiffness(k,theta)
+    #function prototype: D2_SpringElementStiffness(k,theta)
+    #This function returns the element 
+    #stiffness matrix for a 2D spring 
+    #with stiffness k &
+    #angle theta [in degrees].
+    #The size of the element stiffness 
+    #matrix is 4 x 4.
+    x = theta*pi/180
+    C = cos(x)
+    S = sin(x)
+    return k*[C*C C*S -C*C -C*S ; C*S S*S -C*S -S*S 
+       -C*C -C*S C*C C*S ; -C*S -S*S C*S S*S]
+    end
+    export D2_SpringElementStiffness
 function D2_TrussAssemble(K, k, i, j)
     #function prototype : D2_TrussAssemble(K,k,i,j)
     #This function assembles the element stiffness
