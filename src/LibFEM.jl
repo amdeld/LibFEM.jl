@@ -1,5 +1,4 @@
 module LibFEM
-using PyPlot
 function D1_SpringAssemble(K, k, i, j)
     #function prototype: D1_SpringAssemble(K,k,i,j)
     #This function assembles the element stiffness
@@ -74,6 +73,15 @@ function D1_TrussElementStress(k, u, A)
     return k * u / A
 end
 export D1_TrussElementStress
+function D1_TrussElementStrain(L, u)
+    #function prototype: D1_TrussElementStress(k,u,A)
+    #This function returns the element nodal
+    #stress vector given the element stiffness
+    #matrix k; the element nodal displacement
+    #vector u; & the cross-sectional area A.
+    return 1/L * u 
+end
+export D1_TrussElementStrain
 function D2_BeamAssemble(K, k, i, j)
     #function prototype: D2_BeamAssemble(K,k,i,j)
     #This function assembles the element stiffness
